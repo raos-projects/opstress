@@ -1,8 +1,3 @@
-usethis::use_package("dplyr")
-usethis::use_package('magrittr')
-usethis::use_package('future')
-usethis::use_package('future.apply')
-
 #' Operative Stress Score
 #'
 #' Calculate the OSS for CPT Codes contained in a table. OSS for each individual CPT
@@ -24,7 +19,7 @@ usethis::use_package('future.apply')
 #' @param .data the dataset containing units' CPT Code data for which the OSS scores
 #' are to be calculated. N.B. This parameter is NOT the table [opstress::cpt] which
 #' contains the key:value mapping of CPT codes to OSS. Example values for `.data`
-#' include [opstress::example_cpts_long] and [opstress::example_cpts_wide]
+#' are in [opstress::example_cpts]
 #' @param .column_prefix prefix in names of columns which contain CPT codes to
 #' be assigned OSS values (e.g. 'procd' for `procd1`, `procd2`, etc.)
 #' @param .ncores the number of cores to use in parallel processing when generating
@@ -34,9 +29,9 @@ usethis::use_package('future.apply')
 #' corresponding to each column specified by `.column_prefix`
 #' @export
 #'
-#' @examples oss(example_cpts_wide, 'procd') #no need to specify .id given each row is assumed to represent a unique unit
-#' @examples oss(example_cpts_long, 'procd') #multiple rows with same value of `mrn` all specify the same unit
-#' @examples oss(example_cpts_long, 'procd', .ncores = 4) #compute OSS in parallel across 4 cores
+#' @examples oss(example_cpts)
+#' @examples oss(example_cpts$procd)
+#' @examples oss(example_cpts, 'procd', .ncores = 2)
 #'
 
 oss <- function(.data, .column_prefix = NA, .ncores = 1) {
@@ -62,25 +57,27 @@ oss <- function(.data, .column_prefix = NA, .ncores = 1) {
     }
   }
 
-  cpt_map <- opstress::cpt %>%
-    dplyr::select(cpt_code, oss)
+  cpt_map <- dplyr::select(opstress::cpt, cpt_code, oss)
 
   cpt_cols <- grep(paste0("^", .column_prefix), names(.data), value = TRUE)
 
   get_oss_col <- function(col) {
     cpt_vec <- .data[[col]]
-    oss_vec <- cpt_map$oss[match(cpt_vec, cpt_map$cpt_code)]
+    # oss_vec <- cpt_map$oss[match(cpt_vec, cpt_map$cpt_code)]
+    oss_vec <- cpt[match(cpt_vec, cpt_map$cpt_code), c('oss','cpt_description')]
     oss_vec
   }
 
   if (.ncores > 1) {
     future::plan(future::multisession, workers = .ncores)
-    oss_matrix <- future.apply::future_lapply(cpt_cols, get_oss_col) %>% as.data.frame()
+    oss_matrix <- as.data.frame(future.apply::future_lapply(cpt_cols, get_oss_col))
     future::plan(future::sequential)  # Reset to sequential to avoid surprises later
   } else {
-    oss_matrix <- lapply(cpt_cols, get_oss_col) %>% as.data.frame()
+    oss_matrix <- as.data.frame(lapply(cpt_cols, get_oss_col))
   }
 
-  names(oss_matrix) <- paste0(cpt_cols, "_oss")
-  return(bind_cols(.data, oss_matrix))
+  names(oss_matrix) <- c(paste0(cpt_cols, "_oss"), paste0(cpt_cols, "_descr"))
+  output <- cbind(.data, oss_matrix)
+  rownames(output) <- NULL
+  return(output)
 }

@@ -4,21 +4,16 @@
 \alias{oss}
 \title{Operative Stress Score}
 \usage{
-oss(.data, .column_prefix, .id = NA, .ncores = 1)
+oss(.data, .column_prefix = NA, .ncores = 1)
 }
 \arguments{
 \item{.data}{the dataset containing units' CPT Code data for which the OSS scores
 are to be calculated. N.B. This parameter is NOT the table \link{cpt} which
 contains the key:value mapping of CPT codes to OSS. Example values for \code{.data}
-include \link{example_cpts_long} and \link{example_cpts_wide}}
+are in \link{example_cpts}}
 
 \item{.column_prefix}{prefix in names of columns which contain CPT codes to
 be assigned OSS values (e.g. 'procd' for \code{procd1}, \code{procd2}, etc.)}
-
-\item{.id}{name of column containing patient or encounter IDs. Default
-value \code{NA} assumes no ID column and that each row refers to a unique unit. If
-value is a vector of column names, then all unique combinations of values from
-the columns will be used as the grouping criterion (similar to \link[dplyr:group_by]{dplyr::group_by})}
 
 \item{.ncores}{the number of cores to use in parallel processing when generating
 OSS columns for each column of CPT codes}
@@ -46,8 +41,8 @@ data pertaining to a single unit. This is the same data format assumed in the
 \code{comorbidity} package.
 }
 \examples{
-oss(example_cpts_wide, 'procd') #no need to specify .id given each row is assumed to represent a unique unit
-oss(example_cpts_long, 'procd', id = 'mrn') #multiple rows with same value of `mrn` all specify the same unit
-oss(example_cpts_long, 'procd', id = 'mrn', .ncores = 4) #compute OSS in parallel across 4 cores
+oss(example_cpts)
+oss(example_cpts$procd)
+oss(example_cpts, 'procd', .ncores = 2)
 
 }
