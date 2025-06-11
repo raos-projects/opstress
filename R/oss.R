@@ -63,7 +63,6 @@ oss <- function(.data, .column_prefix = NA, .ncores = 1) {
 
   get_oss_col <- function(col) {
     cpt_vec <- .data[[col]]
-    # oss_vec <- cpt_map$oss[match(cpt_vec, cpt_map$cpt_code)]
     oss_vec <- cpt[match(cpt_vec, cpt_map$cpt_code), c('oss','cpt_description')]
     oss_vec
   }
