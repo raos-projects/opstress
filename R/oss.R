@@ -14,7 +14,10 @@
 #' sources such as HCUP. The second structure is that in which each
 #' CPT code is stored in a single column, and multiple rows may contain CPT code
 #' data pertaining to a single unit. This is the same data format assumed in the
-#' `comorbidity` package.
+#' `comorbidity` package. Data in which multiple codes are stored in a single
+#' cell of a data.frame (perhaps separated by spaces or delimiters, in a string)
+#' need to be pre-processed into the either of the aforementioned data formats
+#' before using `oss`.
 #'
 #' @param .data the dataset containing units' CPT Code data for which the OSS scores
 #' are to be calculated. N.B. This parameter is NOT the table [opstress::cpt] which
@@ -25,14 +28,15 @@
 #' @param .ncores the number of cores to use in parallel processing when generating
 #' OSS columns for each column of CPT codes
 #'
-#' @return the same dataset passed to the function with new columns for OSS
-#' corresponding to each column specified by `.column_prefix`
+#' @return the same dataset passed to the function with new columns for OSS and
+#' procedure description corresponding to each column specified by
+#' `.column_prefix`. If there is no OSS value matching a given CPT, the OSS and
+#' desctription returned are both `NA`
 #' @export
 #'
-#' @examples oss(example_cpts)
-#' @examples oss(example_cpts$procd)
-#' @examples oss(example_cpts, 'procd', .ncores = 2)
-#'
+#' @examples oss(example_cpts$procd) #calculate oss for vector of CPT codes
+#' @examples oss(example_cpts, 'procd') #calculate oss for column of CPT codes
+#' @examples oss(example_cpts, 'procd', .ncores = 2) #same as above, in parallel
 
 oss <- function(.data, .column_prefix = NA, .ncores = 1) {
 
@@ -62,7 +66,7 @@ oss <- function(.data, .column_prefix = NA, .ncores = 1) {
   cpt_cols <- grep(paste0("^", .column_prefix), names(.data), value = TRUE)
 
   get_oss_col <- function(col) {
-    cpt_vec <- .data[[col]]
+    cpt_vec <- as.numeric(.data[[col]])
     oss_vec <- cpt[match(cpt_vec, cpt_map$cpt_code), c('oss','cpt_description')]
     oss_vec
   }

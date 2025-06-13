@@ -19,8 +19,10 @@ be assigned OSS values (e.g. 'procd' for \code{procd1}, \code{procd2}, etc.)}
 OSS columns for each column of CPT codes}
 }
 \value{
-the same dataset passed to the function with new columns for OSS
-corresponding to each column specified by \code{.column_prefix}
+the same dataset passed to the function with new columns for OSS and
+procedure description corresponding to each column specified by
+\code{.column_prefix}. If there is no OSS value matching a given CPT, the OSS and
+desctription returned are both \code{NA}
 }
 \description{
 Calculate the OSS for CPT Codes contained in a table. OSS for each individual CPT
@@ -38,11 +40,13 @@ each unit. This is the same data format assumed for the input data in the
 sources such as HCUP. The second structure is that in which each
 CPT code is stored in a single column, and multiple rows may contain CPT code
 data pertaining to a single unit. This is the same data format assumed in the
-\code{comorbidity} package.
+\code{comorbidity} package. Data in which multiple codes are stored in a single
+cell of a data.frame (perhaps separated by spaces or delimiters, in a string)
+need to be pre-processed into the either of the aforementioned data formats
+before using \code{oss}.
 }
 \examples{
-oss(example_cpts)
-oss(example_cpts$procd)
-oss(example_cpts, 'procd', .ncores = 2)
-
+oss(example_cpts$procd) #calculate oss for vector of CPT codes
+oss(example_cpts, 'procd') #calculate oss for column of CPT codes
+oss(example_cpts, 'procd', .ncores = 2) #same as above, in parallel
 }

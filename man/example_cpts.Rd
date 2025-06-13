@@ -5,7 +5,9 @@
 \alias{example_cpts}
 \title{Example CPT Codes}
 \format{
-one column: \verb{procd<integer>}
+\verb{id<integer>} unrelated to computation, can signify patient identity
+
+\verb{procd<integer>} CPT codes to be mapped to OSS
 }
 \usage{
 example_cpts
