@@ -1,10 +1,17 @@
 Package: opstress
-Title: What the Package Does (One Line, Title Case)
+Title: Assign Operative Severity Scores to Current Procedural Terminology Codes
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Saieesh", "Rao", email = "saieesh.rao@northwestern.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6376-6172"))
+Description: This package provides a data.frame containing operative severity
+  scores, a validated measure of physiologic burden associated with different
+  surgical cases. This score has been used in studies of frailty and its 
+  association with mortality (see Shinall et. al, JAMA Surgery (2020)).
+  A convenience function, `oss`, is included for mapping operative severity scores
+  to CPT codes contained in data.frame variables or similar data structures. While
+  this function is efficient for most applications, it includes an option for
+  parallel processing which may be useful in larger data sets.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

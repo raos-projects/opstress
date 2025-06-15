@@ -5,9 +5,9 @@ The `opstress` R package provides a fast and flexible way to assign
 Operative Stress Scores (OSS) to CPT codes, using the `oss` function.
 
 Operative Stress Scores are ordinal numeric values assigned to surgical
-CPT codes based on physiologic burden. The OSS was developed and
-validated by a multi-institutional expert panel and is commonly used in
-geriatric surgery research.
+CPT codes based on physiologic burden associated with surgery. The OSS
+was developed and validated by a multi-institutional expert panel and is
+commonly used in geriatric surgery research.
 
 The `oss` function works on both wide and long data formats and can
 handle input as base `data.frame`, `data.table`, or `tibble` objects.
@@ -54,6 +54,9 @@ contains the following columns:
 | `cpt_code`        | <numeric> 5-digit CPT code                   |
 | `oss`             | <numeric> operative stress score (range 1-5) |
 | `cpt_description` | <char> plain language description of surgery |
+
+Example CPT codes are included in `opstress::example_cpts`, which is
+used in the vignettes.
 
 ## Vignette
 
@@ -152,4 +155,4 @@ oss(example_cpts[1:10,], .column_prefix = "procd", .ncores = 2) %>% as_tibble()
 ## Contact
 
 Questions about the `opstress` package can be directed to saieesh DOT
-rao AT northwestern DOT edu
+rao AT northwestern DOT edu.
